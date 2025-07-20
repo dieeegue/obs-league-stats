@@ -2,17 +2,32 @@
 
 :root {
   --background: transparent;
-  --foreground: #000;
+  --foreground: #fff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-montserrat);
+  --color-silver: rgb(168, 168, 168);
+  --color-iron: rgb(101, 101, 101);
+  --color-bronze: rgb(181, 113, 79);
+  --color-gold: rgb(255, 215, 0);
+  --color-platinum: rgb(0, 188, 140);
+  --color-diamond: rgb(0, 149, 255);
+  --color-master: rgb(138, 43, 226);
+  --color-grandmaster: rgb(220, 20, 60);
+  --color-challenger: rgb(255, 185, 15);
+  --font-montserrat: var(--font-montserrat);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+@layer utilities {
+  .text-shadow-custom {
+    text-shadow: rgba(0, 0, 0, 0.8) 1px 1px 1px;
+  }
 }
