@@ -1,10 +1,11 @@
 import { isUndefined } from '@LeagueStatsOverlay/common/utils/isUndefined';
 import { LeagueEntryDTO } from '../dtos/LeagueEntryDTO';
-import { RankedStats } from '../models/RankedStats';
+import { UserStats } from '../models/UserStats';
 
-export const buildRankedStats = (
+export const buildUserStats = (
   entries: LeagueEntryDTO[],
-): RankedStats | undefined => {
+  profileIconId: number,
+): UserStats | undefined => {
   const rankedSoloDuoEntry = entries.find(
     entry => entry.queueType === 'RANKED_SOLO_5x5',
   );
@@ -13,8 +14,7 @@ export const buildRankedStats = (
     return undefined;
   }
 
-  const { wins, losses, tier, rank, leaguePoints, hotStreak } =
-    rankedSoloDuoEntry;
+  const { wins, losses, tier, rank, leaguePoints } = rankedSoloDuoEntry;
 
   const totalGames = wins + losses;
   const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
@@ -26,6 +26,6 @@ export const buildRankedStats = (
     wins,
     losses,
     winRate: Math.round(winRate * 100) / 100,
-    isHotStreak: hotStreak,
+    profileIconId,
   };
 };

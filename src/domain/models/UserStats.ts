@@ -1,9 +1,9 @@
-export interface RankedStats {
+export interface UserStats {
   tier: string;
   rank: string;
   leaguePoints: number;
   wins: number;
   losses: number;
   winRate: number;
-  isHotStreak: boolean;
+  profileIconId: number;
 }

@@ -1,22 +1,21 @@
 import { isUndefined } from '@LeagueStatsOverlay/common/utils/isUndefined';
-import { buildRankedStats } from '../builders/rankedStats.factory';
-import { LeagueEntryDTO } from '../dtos/LeagueEntryDTO';
-import { RankedStats } from '../models/RankedStats';
+import { buildUserStats } from '../builders/userStats.factory';
+import { UserStats } from '../models/UserStats';
 
 export const getRankedStats = async (
   gameName: string,
   tagLine: string,
-): Promise<RankedStats> => {
+): Promise<UserStats> => {
   const response = await fetch(
     `/api/riot/ranked?gameName=${gameName}&tagLine=${tagLine}`,
   );
-  const data = (await response.json()) as LeagueEntryDTO[];
+  const { rankedStats, profileIconId } = await response.json();
 
-  const rankedStats = buildRankedStats(data);
+  const userStats = buildUserStats(rankedStats, profileIconId);
 
-  if (isUndefined(rankedStats)) {
+  if (isUndefined(userStats)) {
     throw new Error('No se encontraron datos de Solo/Duo Queue');
   }
 
-  return rankedStats;
+  return userStats;
 };

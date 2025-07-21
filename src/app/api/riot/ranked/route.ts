@@ -45,7 +45,24 @@ export async function GET(request: NextRequest) {
     }
     const rankedStats = await rankedResponse.json();
 
-    return NextResponse.json(rankedStats);
+    const profileResponse = await fetch(
+      `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
+      {
+        headers: {
+          'X-Riot-Token': riotApiKey,
+        },
+      },
+    );
+
+    if (!profileResponse.ok) {
+      return NextResponse.json({}, { status: 500 });
+    }
+
+    const profile = await profileResponse.json();
+    return NextResponse.json({
+      rankedStats,
+      profileIconId: profile.profileIconId,
+    });
   } catch {
     return NextResponse.json({}, { status: 500 });
   }
