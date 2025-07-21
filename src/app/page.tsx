@@ -1,50 +1,87 @@
 'use client';
 
-import { isNull } from '@LeagueStatsOverlay/common/utils/isNull';
 import { getRankedStats } from '@LeagueStatsOverlay/domain/services/getRankedStats';
 import { getTierColor } from '@LeagueStatsOverlay/common/utils/getTierColor';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import { UserStats } from '@LeagueStatsOverlay/domain/models/UserStats';
-import { isUndefined } from '@LeagueStatsOverlay/common/utils/isUndefined';
 import Image from 'next/image';
+import useSWR from 'swr';
+
+const fetchPlayerStats = async ([gameName, tagLine]: [string, string]) => {
+  return await getRankedStats(gameName, tagLine);
+};
 
 function PlayerCard() {
-  const [hasError, setHasError] = useState(false);
-  const [rankedStats, setRankedStats] = useState<UserStats | undefined>(
-    undefined,
-  );
-
   const searchParams = useSearchParams();
   const gameName = searchParams.get('gameName');
   const tagLine = searchParams.get('tagLine');
 
-  const getUserStats = async () => {
-    try {
-      if (isNull(gameName) || isNull(tagLine)) {
-        setHasError(true);
-        return;
-      }
+  const swrKey = gameName && tagLine ? ([gameName, tagLine] as const) : null;
 
-      const rankedStats = await getRankedStats(gameName, tagLine);
-      setRankedStats(rankedStats);
-    } catch {
-      setHasError(true);
-    }
-  };
+  const {
+    data: rankedStats,
+    error,
+    isLoading,
+  } = useSWR<UserStats>(swrKey, fetchPlayerStats, {
+    refreshInterval: 30000,
+    revalidateOnReconnect: true,
+    errorRetryCount: 3,
+    errorRetryInterval: 1000,
+    keepPreviousData: true,
+  });
 
-  useEffect(() => {
-    getUserStats();
-  }, [gameName, tagLine]);
-
-  if (hasError) {
-    return <div>Error al cargar los datos</div>;
+  if (!gameName || !tagLine) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <h2 className="text-xl text-gray-600 font-bold mb-4">
+            Parámetros requeridos
+          </h2>
+          <p className="text-gray-600">
+            Agrega ?gameName=TuNombre&tagLine=TuTag a la URL
+          </p>
+          <p className="text-sm text-gray-600 mt-2">
+            Ejemplo: ?gameName=Hide on bush&tagLine=KR1
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  const isLoading = isUndefined(rankedStats);
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <h2 className="text-xl text-gray-600 font-bold mb-4 text-red-500">
+            Error al cargar los datos
+          </h2>
+          <p className="text-sm text-gray-600">
+            Verifica que el nombre y tag sean correctos: {gameName}#{tagLine}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <h2 className="text-xl text-gray-600 font-bold mb-4">
+              Cargando datos...
+            </h2>
+            <p className="text-sm text-gray-600">
+              {gameName}#{tagLine}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  if (!rankedStats) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -129,11 +166,7 @@ function PlayerCard() {
 }
 
 function LoadingFallback() {
-  return (
-    <div className="flex items-center justify-center p-4">
-      <div>Cargando...</div>
-    </div>
-  );
+  return <div className="min-h-screen flex items-center justify-center" />;
 }
 
 export default function Page() {
