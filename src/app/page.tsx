@@ -108,16 +108,16 @@ function PlayerCard() {
             </video>
           )}
         </div>
-        <p className="ml-[5px] font-bold text-2xl text-shadow-custom mt-4">
+        <p className="ml-[5px] font-bold text-3xl text-shadow-custom mt-4">
           {gameName}
         </p>
-        <p className="ml-[5px] font-bold text-sm text-shadow-custom">
+        <p className="ml-[5px] font-bold text-md text-shadow-custom">
           <span className={getTierColor(rankedStats.tier)}>
             {rankedStats.tier} {rankedStats.rank}
           </span>
           {` ${rankedStats.leaguePoints} LP`}
         </p>
-        <p className="ml-[5px] font-bold text-sm text-shadow-custom">
+        <p className="ml-[5px] font-bold text-md text-shadow-custom">
           {rankedStats.wins}W - {rankedStats.losses}L{' '}
           <span className={getTierColor(rankedStats.tier)}>
             {rankedStats.winRate}% WR
