@@ -4,12 +4,12 @@ import { isNull } from '@LeagueStatsOverlay/common/utils/isNull';
 import { getRankedStats } from '@LeagueStatsOverlay/domain/services/getRankedStats';
 import { getTierColor } from '@LeagueStatsOverlay/common/utils/getTierColor';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { UserStats } from '@LeagueStatsOverlay/domain/models/UserStats';
 import { isUndefined } from '@LeagueStatsOverlay/common/utils/isUndefined';
 import Image from 'next/image';
 
-export default function PlayerCard() {
+function PlayerCard() {
   const [hasError, setHasError] = useState(false);
   const [rankedStats, setRankedStats] = useState<UserStats | undefined>(
     undefined,
@@ -102,7 +102,7 @@ export default function PlayerCard() {
               playsInline
             >
               <source
-                src={`/ranked/plates/animations/emblem-wings-magic-${rankedStats.tier}.webm`}
+                src={`/ranked/plates/animations/emblem-wings-magic-${rankedStats.tier.toLowerCase()}.webm`}
                 type="video/webm"
               />
             </video>
@@ -125,5 +125,21 @@ export default function PlayerCard() {
         </p>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center p-4">
+      <div>Cargando...</div>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PlayerCard />
+    </Suspense>
   );
 }
