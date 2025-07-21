@@ -47,7 +47,7 @@ function PlayerCard() {
   }
 
   return (
-    <div className="flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="flex flex-col items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-2xl shadow-black/10 w-fit px-4 py-4 rounded-lg">
         <div
           className="relative flex justify-center"
@@ -108,7 +108,7 @@ function PlayerCard() {
             </video>
           )}
         </div>
-        <p className="ml-[5px] font-bold text-2xl text-shadow-custom">
+        <p className="ml-[5px] font-bold text-2xl text-shadow-custom mt-4">
           {gameName}
         </p>
         <p className="ml-[5px] font-bold text-sm text-shadow-custom">
